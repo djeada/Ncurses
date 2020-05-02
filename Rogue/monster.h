@@ -1,15 +1,19 @@
 #include "game_settings.h"
+#include "map.h"
 
 class Monster {
+	private:
 		int x;
 		int y;
 		int vx;
 		int vy;
+		int attack;
 		int health;
 		int level;
-		
+		char tile;
+		Map myMap;
+	
 	public:
-		//tutaj dac enuma typy potworow
 		Monster();
 		void move();
 		void checkColisions();

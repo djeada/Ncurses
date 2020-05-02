@@ -11,9 +11,6 @@ Player::Player(){
 	
 	level = 0;
 	exp = 0;
-	
-	//mvprintw(1, 1, "@");
-	//move(1, 1);
 }
 
 Player::Player(int _x, int _y){
@@ -25,19 +22,24 @@ Player::Player(int _x, int _y){
 	
 	level = 0;
 	exp = 0;
-	
-	//mvprintw(y, x, "@");
-	//move(y, x);
 }
 
 void Player::draw(){
-	mvprintw(y, x, "@");
+	mvprintw(y, x, PLAYER_TILE);
 	move(y, x);
 }
 
-void Player::movePlayer(int vx=0, int vy=0){
-	x += vx;
-	y += vy;
+void Player::movePlayer(int dx, int dy){
+	if(checkNoColisions(dx, dy)){
+		x += dx;
+		y += dy;
+	}
+}
+
+bool Player::checkNoColisions(int dx, int dy){
+	if(myMap.getChar(x+dx, y+dy) == BORDER_TILE)
+		return false;
+	return true;
 }
 
 void Player::handleInput(char input){
@@ -72,4 +74,11 @@ int Player::getX(){
 int Player::getY(){
 	return y;
 }
+
+Map Player::getMap(){
+	return myMap;
+}
+
+
+
 
