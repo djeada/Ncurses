@@ -1,18 +1,19 @@
 #include <ncurses.h>
-#include "game_settings.h"
 #include "player.h"
-#include "map.h"
+#include "monster.h"
 
 void screenSetUp();
-int gameLogic(Player* p);
+bool gameLogic(Player* p, std::vector<Monster>* monsters);
 
 int main(){
 	Player myPlayer(1,1);
+	std::vector<Monster> myMonsters = initalizeMonsters(10, myPlayer.getMap());
+	
 	screenSetUp();
 	
-	while(gameLogic(&myPlayer) != 0){
+	while(gameLogic(&myPlayer, &myMonsters)){
 	}
-	
+
 	endwin();
 
 	return 0;
@@ -24,20 +25,31 @@ void screenSetUp(){
 	refresh();
 }
 
-int gameLogic(Player* p){
+bool gameLogic(Player* p, std::vector<Monster>* monsters){
 	clear();
 	p->getMap().draw();
+	
+	for (auto m : *monsters){
+		m.draw();
+   	}
+	
 	p->draw();
 		
 	char ch = getch();		
 
 	if(ch == esc)
-		return 0;
+		return false;
 			
 	p->handleInput(ch);
 	
-	return 1;
+	/*
+	for (auto &m : *monsters){
+		m.moveMonster(p->getMap(), p->getX(), p->getY());
+   	}*/
+	
+	return true;
 }
+
 
 
 

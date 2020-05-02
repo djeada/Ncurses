@@ -2,7 +2,7 @@
 #define BORDER_TILE '#'
 #define GOBLIN 'g'
 #define ORC 'o'
-#define troll 't'
-#define dragon 'd'
+#define TROLL 't'
+#define DRAGON 'd'
 #define esc 27
 

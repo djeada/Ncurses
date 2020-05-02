@@ -26,3 +26,10 @@ char Map::getChar(int x, int y){
 	return rows[y][x];
 }
 
+int Map::screenWidth(){
+	return rows[0].size();
+}
+int Map::screenHeight(){
+	return rows.size();
+}
+

@@ -12,7 +12,8 @@ class Map {
 		Map();
 		void draw();
 		char getChar(int x, int y);
+		int screenWidth();
+		int screenHeight();
 };
-
 
 #endif

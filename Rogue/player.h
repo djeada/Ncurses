@@ -14,6 +14,7 @@ class Player {
 		int exp;
 		int level;
 		Map myMap;
+		
 	public:
 		Player();
 		Player(int _x, int _y);
@@ -21,8 +22,8 @@ class Player {
 		void draw();
 		void movePlayer(int dx, int dy);
 		bool checkNoColisions(int dx, int dy);
+		//bool levelUp();
 		//void fight();
-		//void levelUp();
 		
 		int getX();
 		int getY();
