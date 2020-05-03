@@ -14,19 +14,24 @@ class Player {
 		int exp;
 		int level;
 		Map myMap;
+		void increaseExp(char tile);
 		
 	public:
 		Player();
 		Player(int _x, int _y);
-		void handleInput(char ch);
 		void draw();
+		void handleInput(char ch);
 		void movePlayer(int dx, int dy);
 		bool checkNoColisions(int dx, int dy);
-		//bool levelUp();
-		//void fight();
+		void fight(std::vector<Monster>& monsters);
+		bool levelUp();
 		
 		int getX();
 		int getY();
+		int getHealth();
+		int getExp();
+		int getLevel();
+		
 		Map getMap();
 };
 

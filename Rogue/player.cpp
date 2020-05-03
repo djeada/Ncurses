@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <stdio.h>
+#include <cmath>
 #include "player.h"
 
 Player::Player(){
@@ -25,8 +26,15 @@ Player::Player(int _x, int _y){
 }
 
 void Player::draw(){
-	mvprintw(y, x, PLAYER_TILE);
-	move(y, x);
+
+	if(health > 0){
+		mvprintw(y, x, PLAYER_TILE);
+		move(y, x);
+	}
+	else {
+		mvprintw(y, x, DEAD_PLAYER_TILE);
+		move(y, x);
+	}
 }
 
 void Player::movePlayer(int dx, int dy){
@@ -37,34 +45,106 @@ void Player::movePlayer(int dx, int dy){
 }
 
 bool Player::checkNoColisions(int dx, int dy){
-	if(myMap.getChar(x+dx, y+dy) == BORDER_TILE)
+	if(myMap.getChar(x+dx, y+dy) == BORDER)
 		return false;
 	return true;
 }
 
 void Player::handleInput(char input){
-	printf("Input: %c \n", input);
-	switch(input){
-     	case 'w': case 'W':
-			movePlayer(0, -1);
+
+	if(health > 0){	
+		switch(input){
+    	 	case 'w': case 'W':
+				movePlayer(0, -1);
+				break;
+		
+			case 'a': case 'A':
+				movePlayer(-1, 0);
+				break;
+		
+			case 's': case 'S':
+				movePlayer(0, 1);
+				break;
+		
+			case 'd': case 'D':
+				movePlayer(1, 0);
+				break;
+		
+			default:
+				printf("Default \n");
+				break;
+		}
+	}
+}
+
+bool isInRange(int x1, int y1, int x2, int y2){
+	float dist = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+	if(dist < 2)
+		return true;
+		
+	return false;
+}
+
+void Player::fight(std::vector<Monster>& monsters){
+
+	auto i = std::begin(monsters);
+
+	while (i != std::end(monsters)) {
+		if(isInRange(x, y, i->getX(), i->getY())){
+			if(headOrTail()){
+				i->setHealth(i->getHealth() - attack);
+				if(i->getHealth() < 0){
+					increaseExp(i->getTile());
+					i = monsters.erase(i);
+					if(levelUp()){
+						health = 10 *(level + 1);
+					}
+					break;	
+				}
+			}
+			if(headOrTail()){
+				health -= i->getAttack();
+				if(health < 0)
+					break;
+			}
+		}
+	    else
+	        ++i;
+	}
+}
+
+void Player::increaseExp(char tile){
+	switch(tile){
+     	case GOBLIN: 
+			exp += 3;
 			break;
 		
-		case 'a': case 'A':
-			movePlayer(-1, 0);
+		case ORC:
+			exp += 5;
 			break;
 		
-		case 's': case 'S':
-			movePlayer(0, 1);
+		case TROLL:
+			exp += 10;
 			break;
 		
-		case 'd': case 'D':
-			movePlayer(1, 0);
+		case DRAGON:
+			exp += 50;
 			break;
 		
 		default:
-			printf("Default \n");
 			break;
 	}
+} 
+
+bool Player::levelUp(){
+	if(exp >= level*10){
+		while(exp >= level*10){
+			exp -= level*10;
+			level++;
+		}
+		return true;
+	}
+	return false;
 }
 
 int Player::getX(){
@@ -75,12 +155,21 @@ int Player::getY(){
 	return y;
 }
 
+int Player::getHealth(){
+	return health;
+}
+
+int Player::getExp(){
+	return exp;
+}
+		
+int Player::getLevel(){
+	return level;
+}
+
 Map Player::getMap(){
 	return myMap;
 }
-
-
-
 
 
 

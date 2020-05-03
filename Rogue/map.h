@@ -10,7 +10,7 @@ class Map {
 	
 	public:
 		Map();
-		void draw();
+		void draw(int health, int level, int exp);
 		char getChar(int x, int y);
 		int screenWidth();
 		int screenHeight();

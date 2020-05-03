@@ -3,7 +3,7 @@
 #include "monster.h"
 
 void screenSetUp();
-bool gameLogic(Player* p, std::vector<Monster>* monsters);
+bool gameLogic(Player* p, std::vector<Monster>& monsters);
 
 int main(){
 	Player myPlayer(1,1);
@@ -11,7 +11,7 @@ int main(){
 	
 	screenSetUp();
 	
-	while(gameLogic(&myPlayer, &myMonsters)){
+	while(gameLogic(&myPlayer, myMonsters)){
 	}
 
 	endwin();
@@ -25,11 +25,11 @@ void screenSetUp(){
 	refresh();
 }
 
-bool gameLogic(Player* p, std::vector<Monster>* monsters){
+bool gameLogic(Player* p, std::vector<Monster>& monsters){
 	clear();
-	p->getMap().draw();
+	p->getMap().draw(p->getHealth(), p->getLevel(), p->getExp());
 	
-	for (auto m : *monsters){
+	for(auto &m : monsters){
 		m.draw();
    	}
 	
@@ -41,11 +41,11 @@ bool gameLogic(Player* p, std::vector<Monster>* monsters){
 		return false;
 			
 	p->handleInput(ch);
+	p->fight(monsters);
 	
-	/*
-	for (auto &m : *monsters){
+	for(auto &m : monsters){
 		m.moveMonster(p->getMap(), p->getX(), p->getY());
-   	}*/
+   	}
 	
 	return true;
 }

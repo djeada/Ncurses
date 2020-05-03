@@ -38,8 +38,26 @@ Monster::Monster(int _x, int _y, char t){
 }
 
 void Monster::draw(){
-	const char *c = &tile;
-	mvprintw(y, x, c);
+	switch(tile){
+     	case GOBLIN: 
+			mvprintw(y, x, GOBLIN_TILE);
+			break;
+		
+		case ORC:
+			mvprintw(y, x, ORC_TILE);
+			break;
+		
+		case TROLL:
+			mvprintw(y, x, TROLL_TILE);
+			break;
+		
+		case DRAGON:
+			mvprintw(y, x, DRAGON_TILE);
+			break;
+		
+		default:
+			break;
+	}
 }
 
 void Monster::moveMonster(Map myMap, int playerX, int playerY){
@@ -48,6 +66,35 @@ void Monster::moveMonster(Map myMap, int playerX, int playerY){
 		y += vy;
 	}
 	randomizeVelocity();
+}
+
+bool Monster::checkNoColisions(Map myMap, int playerX, int playerY){
+	if(myMap.getChar(x+vx, y+vy) == BORDER ||
+		(x+vx == playerX && y+vy == playerY) ||
+		x + vx > myMap.screenWidth() - 1)
+		return false;
+	return true;
+}
+
+
+int Monster::getX(){
+	return x;
+}
+
+int Monster::getY(){
+	return y;
+}
+	
+int Monster::getAttack(){
+	return attack;
+}	
+		
+int Monster::getHealth(){
+	return health;
+}
+
+char Monster::getTile(){
+	return tile;
 }
 
 void Monster::randomizeVelocity(){
@@ -61,25 +108,17 @@ void Monster::randomizeVelocity(){
 	}	
 }
 
-bool Monster::checkNoColisions(Map myMap, int playerX, int playerY){
-	if(myMap.getChar(x+vx, y+vy) == BORDER_TILE ||
-	(x+vx == playerX && y+vy == playerY))
-		return false;
-	return true;
+void Monster::setHealth(int a){
+	health = a;
 }
 
-
-char Monster::getTile(){
-	return tile;
-}
-
-void returnValidPositions(int (&myArray)[2], Map myMap){
-	int x = randomFromRange(0, myMap.screenWidth());
-	int y = randomFromRange(0, myMap.screenHeight());
+void giveValidPositions(int (&myArray)[2], Map myMap){
+	int x = randomFromRange(0, myMap.screenWidth() - 1);
+	int y = randomFromRange(0, myMap.screenHeight() - 1);
 	
-	while(myMap.getChar(x,y) != BORDER_TILE){
-		x = randomFromRange(0, myMap.screenWidth());
-		y = randomFromRange(0, myMap.screenHeight());
+	while(myMap.getChar(x,y) == BORDER){
+		x = randomFromRange(0, myMap.screenWidth() - 1);
+		y = randomFromRange(0, myMap.screenHeight() - 1);
 	}
 	
 	myArray[0] = x;
@@ -94,24 +133,35 @@ std::vector<Monster> initalizeMonsters(int how_many, Map myMap){
 	int number_of_goblins = (int)how_many / 2;
 	
 	for(int i = 0; i < number_of_goblins; i++){
-		returnValidPositions(pos, myMap);
-		monsters.push_back(Monster(3, 3, GOBLIN));
+		giveValidPositions(pos, myMap);
+		monsters.push_back(Monster(pos[0], pos[1], GOBLIN));
 	}
 	
 	// 1/3 orcs
 	int number_of_orcs = (int)how_many / 3;
 	
 	for(int i = 0; i < number_of_orcs; i++){
-		returnValidPositions(pos, myMap);
-		monsters.push_back(Monster(3, 8, ORC));
+		giveValidPositions(pos, myMap);
+		monsters.push_back(Monster(pos[0], pos[1], ORC));
 	}
 	
 	// 1/6 trolls
 	int number_of_trolls = (int)how_many / 6;
 	
 	for(int i = 0; i < number_of_trolls; i++){
-		returnValidPositions(pos, myMap);
-		monsters.push_back(Monster(7, 7, TROLL));
+		giveValidPositions(pos, myMap);
+		monsters.push_back(Monster(pos[0], pos[1], TROLL));
+	}
+	
+	//rest dragons
+	int number_of_dragons = 0;
+	
+	while(number_of_goblins + number_of_orcs + number_of_trolls
+		+ number_of_dragons < how_many){
+		
+		giveValidPositions(pos, myMap);
+		monsters.push_back(Monster(pos[0], pos[1], DRAGON));
+		number_of_dragons++;	
 	}
 	
 	return monsters;

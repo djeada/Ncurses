@@ -21,12 +21,15 @@ class Monster {
 		void draw();
 		void moveMonster(Map myMap, int playerX, int playerY);
 		bool checkNoColisions(Map myMap, int playerX, int playerY);
-		void randomizeVelocity();
-		void setVx(int a);
-		void setVy(int a);
+		
 		int getX();
 		int getY();
+		int getAttack();
+		int getHealth();
 		char getTile();
+		
+		void randomizeVelocity();
+		void setHealth(int a);
 };
 
 std::vector<Monster> initalizeMonsters(int how_many, Map myMap);
