@@ -1,5 +1,6 @@
 #define PLAYER_TILE "@"
 #define DEAD_PLAYER_TILE "X"
+#define TREASURE_TILE "*"
 #define GOBLIN_TILE "g"
 #define ORC_TILE "o"
 #define TROLL_TILE "t"
