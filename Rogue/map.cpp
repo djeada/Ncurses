@@ -1,11 +1,27 @@
 #include "map.h"
+#include "game_settings.h"
 #include <fstream>
 #include <sstream>
 #include <ncurses.h>
 
+const char *maps[number_of_levels] = {"maps/map_1.txt", "maps/map_2.txt", "maps/map_3.txt"}; 
+
 Map::Map(){
+	currentLevel = 0;
+	loadTheMap(maps[currentLevel]);
+}
+
+void Map::levelUp(){
+	currentLevel++;
+	if(currentLevel != number_of_levels){
+		rows.clear();
+		loadTheMap(maps[currentLevel]);
+	}
+}
+
+void Map::loadTheMap(std::string path){
 	std::ifstream in;
-  	in.open("maps/map_1.txt");
+  	in.open(path);
 	std::string row;
 	while(in) { 
 		std::getline(in,row);
@@ -19,19 +35,24 @@ std::string intToStr(int value){
     return ss.str();
 }
 
-void displayPlayerInfo(int y, int health, int level, int exp){
+void displayPlayerInfo(int y, int health, int level, int exp, int currentLevel){
 	int x = 0;
 	
 	std::string message = "";
 	
 	if(health > 0) {
-		message = "Health: " + intToStr(health) +
-			"/" + intToStr((level + 1)*10) +
-			" Level: " + intToStr(level) + 
-			" Exp: " + intToStr(exp);
 	
-
+		if(currentLevel != number_of_levels){
+			message = "Health: " + intToStr(health) +
+				"/" + intToStr((level + 1)*10) +
+				" Level: " + intToStr(level) + 
+				" Exp: " + intToStr(exp);
+		}
+		else {
+			message = "You won!";
+		}
 	}
+	
 	else {
 		message = "You died!";
 	}
@@ -49,11 +70,15 @@ void Map::draw(int health, int level, int exp){
 		mvprintw(y, x, s);
 		y += 1;
    }
-   displayPlayerInfo(y, health, level, exp);
+   displayPlayerInfo(y, health, level, exp, currentLevel);
 }
 
 char Map::getChar(int x, int y){
 	return rows[y][x];
+}
+
+int Map::getLevel(){
+	return currentLevel;	
 }
 
 int Map::screenWidth(){

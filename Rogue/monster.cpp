@@ -5,27 +5,34 @@ Monster::Monster(int _x, int _y, char t){
 	x = _x;
 	y = _y;
 	
-	randomizeVelocity();
-	
 	tile = t;
 	
 	switch(tile){
      	case GOBLIN: 
+			randomizeVelocity();
 			attack = 1;
 			health = 1;
 			break;
 		
 		case ORC:
+			randomizeVelocity();
 			attack = 3;
 			health = 8;
 			break;
 		
 		case TROLL:
+			if(headOrTail())
+				vx = 1;
+			else
+				vx = -1;		
+			vy = 0;
 			attack = 20;
 			health = 30;
 			break;
 		
 		case DRAGON:
+			vx = 0;
+			vy = 0;
 			attack = 100;
 			health = 1000;
 			break;
@@ -38,21 +45,30 @@ Monster::Monster(int _x, int _y, char t){
 }
 
 void Monster::draw(){
+
 	switch(tile){
      	case GOBLIN: 
+			attron(COLOR_PAIR(GOBLIN_COLOR));
 			mvprintw(y, x, GOBLIN_TILE);
+			attroff(COLOR_PAIR(GOBLIN_COLOR));
 			break;
 		
 		case ORC:
+			attron(COLOR_PAIR(ORC_COLOR));
 			mvprintw(y, x, ORC_TILE);
+			attroff(COLOR_PAIR(ORC_COLOR));
 			break;
 		
 		case TROLL:
+			attron(COLOR_PAIR(TROLL_COLOR));
 			mvprintw(y, x, TROLL_TILE);
+			attroff(COLOR_PAIR(TROLL_COLOR));
 			break;
 		
 		case DRAGON:
+			attron(COLOR_PAIR(DRAGON_COLOR));
 			mvprintw(y, x, DRAGON_TILE);
+			attroff(COLOR_PAIR(DRAGON_COLOR));
 			break;
 		
 		default:
@@ -65,7 +81,8 @@ void Monster::moveMonster(Map myMap, int playerX, int playerY){
 		x += vx;
 		y += vy;
 	}
-	randomizeVelocity();
+	else
+		randomizeVelocity();
 }
 
 bool Monster::checkNoColisions(Map myMap, int playerX, int playerY){
@@ -110,19 +127,6 @@ void Monster::randomizeVelocity(){
 
 void Monster::setHealth(int a){
 	health = a;
-}
-
-void giveValidPositions(int (&myArray)[2], Map myMap){
-	int x = randomFromRange(0, myMap.screenWidth() - 1);
-	int y = randomFromRange(0, myMap.screenHeight() - 1);
-	
-	while(myMap.getChar(x,y) == BORDER){
-		x = randomFromRange(0, myMap.screenWidth() - 1);
-		y = randomFromRange(0, myMap.screenHeight() - 1);
-	}
-	
-	myArray[0] = x;
-	myArray[1] = y;
 }
 
 std::vector<Monster> initalizeMonsters(int how_many, Map myMap){

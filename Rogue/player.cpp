@@ -12,6 +12,7 @@ Player::Player(){
 	
 	level = 0;
 	exp = 0;
+	newMapLevelFlag = false;
 }
 
 Player::Player(int _x, int _y){
@@ -23,14 +24,18 @@ Player::Player(int _x, int _y){
 	
 	level = 0;
 	exp = 0;
+	newMapLevelFlag = false;
 }
 
 void Player::draw(){
 
 	if(health > 0){
+		attron(COLOR_PAIR(PLAYER_COLOR));
 		mvprintw(y, x, PLAYER_TILE);
+		attroff(COLOR_PAIR(PLAYER_COLOR));
 		move(y, x);
 	}
+	
 	else {
 		mvprintw(y, x, DEAD_PLAYER_TILE);
 		move(y, x);
@@ -41,6 +46,14 @@ void Player::movePlayer(int dx, int dy){
 	if(checkNoColisions(dx, dy)){
 		x += dx;
 		y += dy;
+	}
+	if(x == myMap.screenWidth() - 1){
+		myMap.levelUp();
+		if(myMap.getLevel() != number_of_levels){
+			newMapLevelFlag = true;
+			x = 1;
+			y = 1;
+		}
 	}
 }
 
@@ -113,6 +126,22 @@ void Player::fight(std::vector<Monster>& monsters){
 	}
 }
 
+void Player::checkTreasure(std::vector<Treasure>& treasures){
+
+	auto i = std::begin(treasures);
+
+	while (i != std::end(treasures)) {
+		if(isInRange(x, y, i->getX(), i->getY())){
+			attack += i->getBonusAttack();
+			exp += i->getBonusExp();
+			health += i->getBonusHealth();
+			i = treasures.erase(i);
+		}
+		else
+			++i;
+	}
+}
+
 void Player::increaseExp(char tile){
 	switch(tile){
      	case GOBLIN: 
@@ -165,6 +194,14 @@ int Player::getExp(){
 		
 int Player::getLevel(){
 	return level;
+}
+
+void Player::turnOffMapLevelFlag(){
+	newMapLevelFlag = false;
+}
+
+bool Player::newMapLevel(){
+	return newMapLevelFlag;
 }
 
 Map Player::getMap(){

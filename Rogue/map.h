@@ -7,6 +7,7 @@
 class Map {
 	private:
 		std::vector<std::string> rows;
+		int currentLevel;
 	
 	public:
 		Map();
@@ -14,6 +15,9 @@ class Map {
 		char getChar(int x, int y);
 		int screenWidth();
 		int screenHeight();
+		int getLevel();
+		void loadTheMap(std::string path);
+		void levelUp();
 };
 
 #endif

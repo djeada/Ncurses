@@ -14,3 +14,8 @@
 
 #define esc 27
 
+#define number_of_levels 3
+
+enum colors {PLAYER_COLOR, TREASURE_COLOR, 
+	GOBLIN_COLOR, ORC_COLOR, 
+	TROLL_COLOR, DRAGON_COLOR};
