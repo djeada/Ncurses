@@ -78,8 +78,28 @@ void Monster::draw(){
 
 void Monster::moveMonster(Map myMap, int playerX, int playerY){
 	if(checkNoColisions(myMap, playerX, playerY)){
-		x += vx;
-		y += vy;
+		switch(tile){
+	     	case GOBLIN:
+				x += vx;
+				y += vy;
+				randomizeVelocity();
+				break;
+				
+			case TROLL:
+				x += vx;
+				y += vy;			
+				break;
+			
+			case ORC: {
+				std::vector<Position> nextPositions = findTheRoute(playerX, playerY, x, y, myMap);
+				x = nextPositions[nextPositions.size()-1].x;
+				y = nextPositions[nextPositions.size()-1].y;
+				break;
+			}
+				
+			default:
+				break;
+		}
 	}
 	else
 		randomizeVelocity();
@@ -93,6 +113,16 @@ bool Monster::checkNoColisions(Map myMap, int playerX, int playerY){
 	return true;
 }
 
+void Monster::randomizeVelocity(){
+	if (headOrTail() > 0){
+		vx = 0;
+		vy = headOrTail();
+	}
+	else {
+		vx = headOrTail();
+		vy = 0;
+	}	
+}
 
 int Monster::getX(){
 	return x;
@@ -112,17 +142,6 @@ int Monster::getHealth(){
 
 char Monster::getTile(){
 	return tile;
-}
-
-void Monster::randomizeVelocity(){
-	if (headOrTail() > 0){
-		vx = 0;
-		vy = headOrTail();
-	}
-	else {
-		vx = headOrTail();
-		vy = 0;
-	}	
 }
 
 void Monster::setHealth(int a){

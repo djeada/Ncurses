@@ -117,14 +117,20 @@ void solveAStar(Node* nodeStart, Node* nodeEnd){
 std::vector<Node> initializeNode(Map& myMap){
 	std::vector<Node> nodes;
 	
-	int numberVertical = myMap.screenWidth(); 
-	int numberHorizontal = myMap.screenHeight();
+	int numberVertical = myMap.screenHeight(); 
+	int numberHorizontal = myMap.screenWidth();
 	
 	//create Node
 	for(int i = 0; i < numberVertical; i++){
 		for(int j = 0; j < numberHorizontal; j++){
-			Node new_node = {false, INFINITY, INFINITY, {j, i}, {}, nullptr};
-			nodes.push_back(new_node);
+			if(myMap.getChar(j, i) == BORDER) {
+				Node new_node = {true, INFINITY, INFINITY, {j, i}, {}, nullptr};
+				nodes.push_back(new_node);
+			}
+			else {
+				Node new_node = {false, INFINITY, INFINITY, {j, i}, {}, nullptr};
+				nodes.push_back(new_node);
+			}
 		}
 	}
 	
@@ -146,8 +152,8 @@ std::vector<Position> findTheRoute(int playerX, int playerY, int monsterX, int m
 	std::vector<Node> nodes = initializeNode(myMap);
 	
 	//initalize neighbours
-	int numberVertical = myMap.screenWidth(); 
-	int numberHorizontal = myMap.screenHeight();
+	int numberVertical = myMap.screenHeight(); 
+	int numberHorizontal = myMap.screenWidth();
 	for(int i = 0; i < numberVertical; i++){
 		for(int j = 0; j < numberHorizontal; j++){
 			std::vector<Position> neighboursCors = findNeighbours(nodes[j + i*numberHorizontal].cors, numberHorizontal, numberVertical);
